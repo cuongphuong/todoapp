@@ -135,17 +135,20 @@ public class WorkControllerTest {
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
         Assertions.assertEquals(response.getBody().toString(), "[Input work name with 50 byte length]");
     }
-    
+
+    @Test
     public void testCreateWork_statusIsNotNumber() throws Exception {
         WorkInput workInput = new WorkInput();
         workInput.setWorkName("test");
         workInput.setStatus("a");
+        workInput.setStartDate("2022/05/13 00:00:00");
+        workInput.setEndDate("2022/05/14 00:00:00");
         ResponseEntity<Object> response = this.workController.createWork(workInput);
 
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
         Assertions.assertEquals(response.getBody().toString(), "[Status in [0, 1, 2]]");
     }
-    
+
     @Test
     public void testCreateWork_statusIsNotExisted() throws Exception {
         WorkInput workInput = new WorkInput();
@@ -158,7 +161,7 @@ public class WorkControllerTest {
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
         Assertions.assertEquals(response.getBody().toString(), "[Status in [0, 1, 2]]");
     }
-    
+
     @Test
     public void testCreateWork_startDateIsInCorrectFormat() throws Exception {
         WorkInput workInput = new WorkInput();
