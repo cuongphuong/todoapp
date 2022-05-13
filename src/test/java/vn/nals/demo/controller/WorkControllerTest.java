@@ -165,6 +165,7 @@ public class WorkControllerTest {
         workInput.setWorkName("test");
         workInput.setStatus("1");
         workInput.setStartDate("yyyy/mm/dd");
+        workInput.setEndDate("2022/05/14 00:00:00");
         ResponseEntity<Object> response = this.workController.createWork(workInput);
 
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
@@ -176,7 +177,8 @@ public class WorkControllerTest {
         WorkInput workInput = new WorkInput();
         workInput.setWorkName("test");
         workInput.setStatus("1");
-        workInput.setStartDate("yyyy/mm/dd");
+        workInput.setStartDate("2022/05/13 00:00:00");
+        workInput.setEndDate("yyyy/mm/dd");
         ResponseEntity<Object> response = this.workController.createWork(workInput);
 
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
