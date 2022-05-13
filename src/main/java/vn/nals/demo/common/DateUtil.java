@@ -13,6 +13,10 @@ public class DateUtil {
         return isDate(strDate, DATE_FORMAT_YYYY_MM_DD_HH_MM_SS);
     }
 
+    public static Date strToDate(String strDate) {
+        return convertToDate(strDate, DATE_FORMAT_YYYY_MM_DD_HH_MM_SS);
+    }
+
     public static boolean isDate(String strDate, String formatPattern) {
         SimpleDateFormat df;
         Date testDate;
@@ -47,4 +51,25 @@ public class DateUtil {
     public static String toYYYYMMDDHH24MISS(Date date) {
         return new SimpleDateFormat(YYYYMMDDHH24MMSS_FORMAT).format(date);
     }
+
+    public static Date convertToDate(String dateStr, String pattern) {
+        Date date = null;
+        if (dateStr == null || pattern == null) {
+            return (date);
+        }
+
+        if (dateStr.length() < pattern.length()) {
+            return (null);
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        format.setLenient(false);
+        try {
+            date = format.parse(dateStr);
+        } catch (Exception ex) {
+        }
+
+        return date;
+    }
+
 }

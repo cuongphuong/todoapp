@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -59,8 +58,8 @@ public class WorkController {
 
         Work work = new Work();
         work.setWorkName(workInput.getWorkName());
-        work.setStartDate(DateUtils.parseDate(workInput.getStartDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS));
-        work.setEndDate(DateUtils.parseDate(workInput.getEndDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS));
+        work.setStartDate(DateUtil.strToDate(workInput.getStartDate()));
+        work.setEndDate(DateUtil.strToDate(workInput.getEndDate()));
         work.setStatus(NumberUtils.toInt(workInput.getStatus()));
         work.setDeleteFlg(0);
         return ResponseEntity.status(200).body(this.workService.saveWork(work));
@@ -87,8 +86,8 @@ public class WorkController {
         }
 
         work.setWorkName(workInput.getWorkName());
-        work.setStartDate(DateUtils.parseDate(workInput.getStartDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS));
-        work.setEndDate(DateUtils.parseDate(workInput.getEndDate(), DateUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS));
+        work.setStartDate(DateUtil.strToDate(workInput.getStartDate()));
+        work.setEndDate(DateUtil.strToDate(workInput.getEndDate()));
         work.setStatus(NumberUtils.toInt(workInput.getStatus()));
         work.setDeleteFlg(0);
         return ResponseEntity.status(200).body(this.workService.saveWork(work));
@@ -118,8 +117,7 @@ public class WorkController {
                     Work.WORK_NAME_MAX_LENGTH));
         }
 
-        if (!DateUtil.isDefaultDate(work.getStartDate()) 
-                || !DateUtil.isDefaultDate(work.getEndDate())) {
+        if (!DateUtil.isDefaultDate(work.getStartDate()) || !DateUtil.isDefaultDate(work.getEndDate())) {
             errorList.add(String.format("Require date format %s", DateUtil.DATE_FORMAT_YYYY_MM_DD_HH_MM_SS));
         }
 
