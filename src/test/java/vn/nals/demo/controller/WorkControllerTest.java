@@ -318,6 +318,15 @@ public class WorkControllerTest {
         Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);
     }
 
+    @Test
+    public void testHandleParseException() {
+        ParseException ex = new ParseException("can't not parsing", 1);
+        ResponseEntity<String> response = this.workController.handleParseException(ex);
+
+        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);
+        Assertions.assertEquals(response.getBody(), "can't not parsing");
+    }
+
     private void createDataTest() {
         Date startDate = DateUtil.getDate(2022, 5, 14);
         Date endDate = DateUtil.getDate(2022, 5, 15);
