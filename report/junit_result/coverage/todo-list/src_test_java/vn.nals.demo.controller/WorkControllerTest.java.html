@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>WorkControllerTest.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">WorkControllerTest (May 14, 2022 2:20:41 AM)</a> &gt; <a href="../../index.html" class="el_group">todo-list</a> &gt; <a href="../index.html" class="el_bundle">src/test/java</a> &gt; <a href="index.source.html" class="el_package">vn.nals.demo.controller</a> &gt; <span class="el_source">WorkControllerTest.java</span></div><h1>WorkControllerTest.java</h1><pre class="source lang-java linenums">package vn.nals.demo.controller;
+
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+
+import vn.nals.demo.common.DateUtil;
+import vn.nals.demo.entity.Work;
+import vn.nals.demo.entity.WorkInput;
+import vn.nals.demo.repository.WorkRepository;
+
+@SpringBootTest
+<span class="fc" id="L22">public class WorkControllerTest {</span>
+
+    @Autowired
+    private WorkController workController;
+
+    @Autowired
+    private WorkRepository workRepository;
+
+    @BeforeEach
+    public void init() {
+<span class="fc" id="L32">        this.createDataTest();</span>
+<span class="fc" id="L33">    }</span>
+
+    @AfterEach
+    public void teardown() {
+<span class="fc" id="L37">        this.workRepository.deleteAll();</span>
+<span class="fc" id="L38">    }</span>
+
+    @Test
+    public void testGetListWork_pageIndexIsInCorrect() {
+<span class="fc" id="L42">        ResponseEntity&lt;Object&gt; response = this.workController .getListWork(&quot;test&quot;);</span>
+<span class="fc" id="L43">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L44">        Assertions.assertEquals(response.getBody(), &quot;Page number is in correct&quot;);</span>
+<span class="fc" id="L45">    }</span>
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+    @Test
+    public void testGetListWork_findByPagging() {
+        // Check data page 1
+<span class="fc" id="L51">        ResponseEntity&lt;Object&gt; response = this.workController.getListWork(&quot;0&quot;);</span>
+<span class="fc" id="L52">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);</span>
+
+<span class="fc" id="L54">        List&lt;Work&gt; list = (List&lt;Work&gt;) response.getBody();</span>
+<span class="fc" id="L55">        Assertions.assertEquals(list.size(), 5);</span>
+
+<span class="fc" id="L57">        Work firstItem = list.get(0);</span>
+<span class="fc" id="L58">        Assertions.assertEquals(firstItem.getStatus(), 1);</span>
+<span class="fc" id="L59">        Assertions.assertEquals(firstItem.getWorkName(), &quot;work 0&quot;);</span>
+<span class="fc" id="L60">        Assertions.assertEquals(firstItem.getDeleteFlg(), 0);</span>
+<span class="fc" id="L61">        Assertions.assertEquals(</span>
+<span class="fc" id="L62">                DateUtil.toYYYYMMDDHH24MISS(firstItem.getStartDate()), &quot;20220514000000&quot;);</span>
+<span class="fc" id="L63">        Assertions.assertEquals(</span>
+<span class="fc" id="L64">                DateUtil.toYYYYMMDDHH24MISS(firstItem.getEndDate()), &quot;20220515000000&quot;);</span>
+
+<span class="fc" id="L66">        Work lastItem = list.get(4);</span>
+<span class="fc" id="L67">        Assertions.assertEquals(lastItem.getStatus(), 1);</span>
+<span class="fc" id="L68">        Assertions.assertEquals(lastItem.getWorkName(), &quot;work 4&quot;);</span>
+<span class="fc" id="L69">        Assertions.assertEquals(lastItem.getDeleteFlg(), 0);</span>
+<span class="fc" id="L70">        Assertions.assertEquals(</span>
+<span class="fc" id="L71">                DateUtil.toYYYYMMDDHH24MISS(lastItem.getStartDate()), &quot;20220518000000&quot;);</span>
+<span class="fc" id="L72">        Assertions.assertEquals(</span>
+<span class="fc" id="L73">                DateUtil.toYYYYMMDDHH24MISS(lastItem.getEndDate()), &quot;20220519000000&quot;);</span>
+
+        // Check data page 2
+<span class="fc" id="L76">        response = this.workController.getListWork(&quot;1&quot;);</span>
+<span class="fc" id="L77">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);</span>
+
+<span class="fc" id="L79">        list = (List&lt;Work&gt;) response.getBody();</span>
+<span class="fc" id="L80">        Assertions.assertEquals(list.size(), 5);</span>
+
+<span class="fc" id="L82">        firstItem = list.get(0);</span>
+<span class="fc" id="L83">        Assertions.assertEquals(firstItem.getStatus(), 1);</span>
+<span class="fc" id="L84">        Assertions.assertEquals(firstItem.getWorkName(), &quot;work 5&quot;);</span>
+<span class="fc" id="L85">        Assertions.assertEquals(firstItem.getDeleteFlg(), 0);</span>
+<span class="fc" id="L86">        Assertions.assertEquals(</span>
+<span class="fc" id="L87">                DateUtil.toYYYYMMDDHH24MISS(firstItem.getStartDate()), &quot;20220519000000&quot;);</span>
+<span class="fc" id="L88">        Assertions.assertEquals(</span>
+<span class="fc" id="L89">                DateUtil.toYYYYMMDDHH24MISS(firstItem.getEndDate()), &quot;20220520000000&quot;);</span>
+
+<span class="fc" id="L91">        lastItem = list.get(4);</span>
+<span class="fc" id="L92">        Assertions.assertEquals(lastItem.getStatus(), 1);</span>
+<span class="fc" id="L93">        Assertions.assertEquals(lastItem.getWorkName(), &quot;work 9&quot;);</span>
+<span class="fc" id="L94">        Assertions.assertEquals(lastItem.getDeleteFlg(), 0);</span>
+<span class="fc" id="L95">        Assertions.assertEquals(</span>
+<span class="fc" id="L96">                DateUtil.toYYYYMMDDHH24MISS(lastItem.getStartDate()), &quot;20220523000000&quot;);</span>
+<span class="fc" id="L97">        Assertions.assertEquals(</span>
+<span class="fc" id="L98">                DateUtil.toYYYYMMDDHH24MISS(lastItem.getEndDate()), &quot;20220524000000&quot;);</span>
+<span class="fc" id="L99">    }</span>
+
+    @Test
+    public void testCreateWork() {
+<span class="fc" id="L103">        String workName = String.format(&quot;%51s&quot;, &quot;a&quot;);</span>
+<span class="fc" id="L104">        WorkInput workInput = new WorkInput();</span>
+<span class="fc" id="L105">        workInput.setWorkName(workName);</span>
+<span class="fc" id="L106">        workInput.setStatus(&quot;a&quot;);</span>
+<span class="fc" id="L107">        workInput.setStartDate(&quot;yyyy/mm/dd&quot;);</span>
+<span class="fc" id="L108">        workInput.setEndDate(&quot;yyyy/mm/dd&quot;);</span>
+<span class="fc" id="L109">    }</span>
+
+    @Test
+    public void testCreateWork_workNameThan50Character() throws Exception {
+<span class="fc" id="L113">        String workName = String.format(&quot;%51s&quot;, &quot;a&quot;);</span>
+<span class="fc" id="L114">        WorkInput workInput = new WorkInput();</span>
+<span class="fc" id="L115">        workInput.setWorkName(workName);</span>
+<span class="fc" id="L116">        workInput.setStatus(&quot;1&quot;);</span>
+<span class="fc" id="L117">        workInput.setStartDate(&quot;2022/05/13 00:00:00&quot;);</span>
+<span class="fc" id="L118">        workInput.setEndDate(&quot;2022/05/14 00:00:00&quot;);</span>
+<span class="fc" id="L119">        ResponseEntity&lt;Object&gt; response = this.workController.createWork(workInput);</span>
+
+<span class="fc" id="L121">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L122">        Assertions.assertEquals(response.getBody().toString(), &quot;[Input work name with 50 byte length]&quot;);</span>
+<span class="fc" id="L123">    }</span>
+
+    @Test
+    public void testCreateWork_workNameThan50Charater_fullSizeCharacter() throws Exception {
+<span class="fc" id="L127">        String workName = String.format(&quot;%48s&quot;, &quot;a&quot;) + &quot;ａ&quot;;</span>
+<span class="fc" id="L128">        WorkInput workInput = new WorkInput();</span>
+<span class="fc" id="L129">        workInput.setWorkName(workName);</span>
+<span class="fc" id="L130">        workInput.setStatus(&quot;1&quot;);</span>
+<span class="fc" id="L131">        workInput.setStartDate(&quot;2022/05/13 00:00:00&quot;);</span>
+<span class="fc" id="L132">        workInput.setEndDate(&quot;2022/05/14 00:00:00&quot;);</span>
+<span class="fc" id="L133">        ResponseEntity&lt;Object&gt; response = this.workController.createWork(workInput);</span>
+
+<span class="fc" id="L135">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L136">        Assertions.assertEquals(response.getBody().toString(), &quot;[Input work name with 50 byte length]&quot;);</span>
+<span class="fc" id="L137">    }</span>
+
+    @Test
+    public void testCreateWork_statusIsNotNumber() throws Exception {
+<span class="fc" id="L141">        WorkInput workInput = new WorkInput();</span>
+<span class="fc" id="L142">        workInput.setWorkName(&quot;test&quot;);</span>
+<span class="fc" id="L143">        workInput.setStatus(&quot;a&quot;);</span>
+<span class="fc" id="L144">        workInput.setStartDate(&quot;2022/05/13 00:00:00&quot;);</span>
+<span class="fc" id="L145">        workInput.setEndDate(&quot;2022/05/14 00:00:00&quot;);</span>
+<span class="fc" id="L146">        ResponseEntity&lt;Object&gt; response = this.workController.createWork(workInput);</span>
+
+<span class="fc" id="L148">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L149">        Assertions.assertEquals(response.getBody().toString(), &quot;[Status in [0, 1, 2]]&quot;);</span>
+<span class="fc" id="L150">    }</span>
+
+    @Test
+    public void testCreateWork_statusIsNotExisted() throws Exception {
+<span class="fc" id="L154">        WorkInput workInput = new WorkInput();</span>
+<span class="fc" id="L155">        workInput.setWorkName(&quot;test&quot;);</span>
+<span class="fc" id="L156">        workInput.setStatus(&quot;3&quot;);</span>
+<span class="fc" id="L157">        workInput.setStartDate(&quot;2022/05/13 00:00:00&quot;);</span>
+<span class="fc" id="L158">        workInput.setEndDate(&quot;2022/05/14 00:00:00&quot;);</span>
+<span class="fc" id="L159">        ResponseEntity&lt;Object&gt; response = this.workController.createWork(workInput);</span>
+
+<span class="fc" id="L161">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L162">        Assertions.assertEquals(response.getBody().toString(), &quot;[Status in [0, 1, 2]]&quot;);</span>
+<span class="fc" id="L163">    }</span>
+
+    @Test
+    public void testCreateWork_startDateIsInCorrectFormat() throws Exception {
+<span class="fc" id="L167">        WorkInput workInput = new WorkInput();</span>
+<span class="fc" id="L168">        workInput.setWorkName(&quot;test&quot;);</span>
+<span class="fc" id="L169">        workInput.setStatus(&quot;1&quot;);</span>
+<span class="fc" id="L170">        workInput.setStartDate(&quot;yyyy/mm/dd&quot;);</span>
+<span class="fc" id="L171">        workInput.setEndDate(&quot;2022/05/14 00:00:00&quot;);</span>
+<span class="fc" id="L172">        ResponseEntity&lt;Object&gt; response = this.workController.createWork(workInput);</span>
+
+<span class="fc" id="L174">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L175">        Assertions.assertEquals(response.getBody().toString(), &quot;[Require date format yyyy/MM/dd HH:mm:ss]&quot;);</span>
+<span class="fc" id="L176">    }</span>
+
+    @Test
+    public void testCreateWork_endDateIsInCorrectFormat() throws Exception {
+<span class="fc" id="L180">        WorkInput workInput = new WorkInput();</span>
+<span class="fc" id="L181">        workInput.setWorkName(&quot;test&quot;);</span>
+<span class="fc" id="L182">        workInput.setStatus(&quot;1&quot;);</span>
+<span class="fc" id="L183">        workInput.setStartDate(&quot;2022/05/13 00:00:00&quot;);</span>
+<span class="fc" id="L184">        workInput.setEndDate(&quot;yyyy/mm/dd&quot;);</span>
+<span class="fc" id="L185">        ResponseEntity&lt;Object&gt; response = this.workController.createWork(workInput);</span>
+
+<span class="fc" id="L187">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L188">        Assertions.assertEquals(response.getBody().toString(), &quot;[Require date format yyyy/MM/dd HH:mm:ss]&quot;);</span>
+<span class="fc" id="L189">    }</span>
+
+    @Test
+    public void testCreateWork_dataIsValid() throws Exception {
+<span class="fc" id="L193">        WorkInput workInput = new WorkInput();</span>
+<span class="fc" id="L194">        workInput.setWorkName(&quot;test_success&quot;);</span>
+<span class="fc" id="L195">        workInput.setStatus(&quot;1&quot;);</span>
+<span class="fc" id="L196">        workInput.setStartDate(&quot;2022/05/13 00:00:00&quot;);</span>
+<span class="fc" id="L197">        workInput.setEndDate(&quot;2022/05/14 00:00:00&quot;);</span>
+<span class="fc" id="L198">        ResponseEntity&lt;Object&gt; response = this.workController.createWork(workInput);</span>
+
+<span class="fc" id="L200">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);</span>
+<span class="fc" id="L201">        Work workCreated = (Work) response.getBody();</span>
+<span class="fc" id="L202">        Assertions.assertEquals(workCreated.getWorkName(), &quot;test_success&quot;);</span>
+<span class="fc" id="L203">        Assertions.assertEquals(workCreated.getStatus(), 1);</span>
+<span class="fc" id="L204">        Assertions.assertEquals(workCreated.getDeleteFlg(), 0);</span>
+<span class="fc" id="L205">        Assertions.assertEquals(</span>
+<span class="fc" id="L206">                DateUtil.toYYYYMMDDHH24MISS(workCreated.getStartDate()), &quot;20220513000000&quot;);</span>
+<span class="fc" id="L207">        Assertions.assertEquals(</span>
+<span class="fc" id="L208">                DateUtil.toYYYYMMDDHH24MISS(workCreated.getEndDate()), &quot;20220514000000&quot;);</span>
+<span class="fc" id="L209">    }</span>
+
+    @Test
+    public void testUpdateWork_workNameThan50Character() throws Exception {
+<span class="fc" id="L213">        String workName = String.format(&quot;%51s&quot;, &quot;a&quot;);</span>
+<span class="fc" id="L214">        WorkInput workInput = new WorkInput();</span>
+<span class="fc" id="L215">        workInput.setWorkName(workName);</span>
+<span class="fc" id="L216">        workInput.setStatus(&quot;1&quot;);</span>
+<span class="fc" id="L217">        workInput.setStartDate(&quot;2022/05/13 00:00:00&quot;);</span>
+<span class="fc" id="L218">        workInput.setEndDate(&quot;2022/05/14 00:00:00&quot;);</span>
+<span class="fc" id="L219">        ResponseEntity&lt;Object&gt; response = this.workController.updateWork(workInput, 10);</span>
+
+<span class="fc" id="L221">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L222">        Assertions.assertEquals(response.getBody().toString(), &quot;[Input work name with 50 byte length]&quot;);</span>
+<span class="fc" id="L223">    }</span>
+    // .v.v
+    /* Test update with validator same as create above */
+ 
+    @Test
+    public void testUpdateWork_workIdIsNull() throws ParseException {
+        // Start update
+<span class="fc" id="L230">        WorkInput workInput = new WorkInput();</span>
+<span class="fc" id="L231">        workInput.setWorkName(&quot;test_update_success&quot;);</span>
+<span class="fc" id="L232">        workInput.setStatus(&quot;1&quot;);</span>
+<span class="fc" id="L233">        workInput.setStartDate(&quot;2022/05/13 00:00:00&quot;);</span>
+<span class="fc" id="L234">        workInput.setEndDate(&quot;2022/05/14 00:00:00&quot;);</span>
+
+<span class="fc" id="L236">        ResponseEntity&lt;Object&gt; response = this.workController .updateWork(workInput, null);</span>
+<span class="fc" id="L237">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L238">        Assertions.assertEquals(response.getBody(), &quot;Work ID is not valid&quot;);</span>
+<span class="fc" id="L239">    }</span>
+
+    @Test
+    public void testUpdateWork_workIdIsNotExisted() throws ParseException {
+        // Start update
+<span class="fc" id="L244">        WorkInput workInput = new WorkInput();</span>
+<span class="fc" id="L245">        workInput.setWorkName(&quot;test_update_success&quot;);</span>
+<span class="fc" id="L246">        workInput.setStatus(&quot;1&quot;);</span>
+<span class="fc" id="L247">        workInput.setStartDate(&quot;2022/05/13 00:00:00&quot;);</span>
+<span class="fc" id="L248">        workInput.setEndDate(&quot;2022/05/14 00:00:00&quot;);</span>
+
+<span class="fc" id="L250">        ResponseEntity&lt;Object&gt; response = this.workController .updateWork(workInput, 0); // Not existed</span>
+<span class="fc" id="L251">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L252">        Assertions.assertEquals(response.getBody(), &quot;Work is not existed&quot;);</span>
+<span class="fc" id="L253">    }</span>
+
+    @Test
+    public void testUpdateWork_dataIsValid() throws Exception {
+        // Prepare a work
+<span class="fc" id="L258">        Date startDate = DateUtil.getDate(2022, 5, 10);</span>
+<span class="fc" id="L259">        Date endDate = DateUtil.getDate(2022, 5, 11);</span>
+
+<span class="fc" id="L261">        Work work = new Work();</span>
+<span class="fc" id="L262">        work.setWorkName(&quot;work_was_update&quot;);</span>
+<span class="fc" id="L263">        work.setStatus(1);</span>
+<span class="fc" id="L264">        work.setDeleteFlg(0);</span>
+<span class="fc" id="L265">        work.setStartDate(startDate);</span>
+<span class="fc" id="L266">        work.setEndDate(endDate);</span>
+<span class="fc" id="L267">        this.workRepository.saveAndFlush(work);</span>
+
+        // Start update
+<span class="fc" id="L270">        WorkInput workInput = new WorkInput();</span>
+<span class="fc" id="L271">        workInput.setWorkName(&quot;test_update_success&quot;);</span>
+<span class="fc" id="L272">        workInput.setStatus(&quot;1&quot;);</span>
+<span class="fc" id="L273">        workInput.setStartDate(&quot;2022/05/13 00:00:00&quot;);</span>
+<span class="fc" id="L274">        workInput.setEndDate(&quot;2022/05/14 00:00:00&quot;);</span>
+<span class="fc" id="L275">        ResponseEntity&lt;Object&gt; response = this.workController.updateWork(workInput, work.getWorkId());</span>
+
+<span class="fc" id="L277">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);</span>
+<span class="fc" id="L278">        Work workCreated = (Work) response.getBody();</span>
+<span class="fc" id="L279">        Assertions.assertEquals(workCreated.getWorkName(), &quot;test_update_success&quot;);</span>
+<span class="fc" id="L280">        Assertions.assertEquals(workCreated.getStatus(), 1);</span>
+<span class="fc" id="L281">        Assertions.assertEquals(workCreated.getDeleteFlg(), 0);</span>
+<span class="fc" id="L282">        Assertions.assertEquals(</span>
+<span class="fc" id="L283">                DateUtil.toYYYYMMDDHH24MISS(workCreated.getStartDate()), &quot;20220513000000&quot;);</span>
+<span class="fc" id="L284">        Assertions.assertEquals(</span>
+<span class="fc" id="L285">                DateUtil.toYYYYMMDDHH24MISS(workCreated.getEndDate()), &quot;20220514000000&quot;);</span>
+<span class="fc" id="L286">    }</span>
+
+    @Test
+    public void testDeleteWork_workIdIsNull() throws Exception {
+        // Delete
+<span class="fc" id="L291">        ResponseEntity&lt;Object&gt; response = this.workController.deleteWork(null);</span>
+<span class="fc" id="L292">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L293">    }</span>
+
+    @Test
+    public void testDeleteWork_workIdIsNotExisted() throws Exception {
+        // Delete
+<span class="fc" id="L298">        ResponseEntity&lt;Object&gt; response = this.workController.deleteWork(0);</span>
+<span class="fc" id="L299">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L300">    }</span>
+
+    @Test
+    public void testDeleteWork_deleteSuccess() throws Exception {
+        // Prepare a work
+<span class="fc" id="L305">        Date startDate = DateUtil.getDate(2022, 5, 10);</span>
+<span class="fc" id="L306">        Date endDate = DateUtil.getDate(2022, 5, 11);</span>
+
+<span class="fc" id="L308">        Work work = new Work();</span>
+<span class="fc" id="L309">        work.setWorkName(&quot;work_is_deleted&quot;);</span>
+<span class="fc" id="L310">        work.setStatus(1);</span>
+<span class="fc" id="L311">        work.setDeleteFlg(0);</span>
+<span class="fc" id="L312">        work.setStartDate(startDate);</span>
+<span class="fc" id="L313">        work.setEndDate(endDate);</span>
+<span class="fc" id="L314">        this.workRepository.saveAndFlush(work);</span>
+
+        // Delete
+<span class="fc" id="L317">        ResponseEntity&lt;Object&gt; response = this.workController.deleteWork(work.getWorkId());</span>
+<span class="fc" id="L318">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.OK);</span>
+<span class="fc" id="L319">    }</span>
+
+    @Test
+    public void testHandleParseException() {
+<span class="fc" id="L323">        ParseException ex = new ParseException(&quot;can't not parsing&quot;, 1);</span>
+<span class="fc" id="L324">        ResponseEntity&lt;String&gt; response = this.workController.handleParseException(ex);</span>
+
+<span class="fc" id="L326">        Assertions.assertEquals(response.getStatusCode(), HttpStatus.BAD_REQUEST);</span>
+<span class="fc" id="L327">        Assertions.assertEquals(response.getBody(), &quot;can't not parsing&quot;);</span>
+<span class="fc" id="L328">    }</span>
+
+    private void createDataTest() {
+<span class="fc" id="L331">        Date startDate = DateUtil.getDate(2022, 5, 14);</span>
+<span class="fc" id="L332">        Date endDate = DateUtil.getDate(2022, 5, 15);</span>
+
+<span class="fc bfc" id="L334" title="All 2 branches covered.">        for (int i = 0; i &lt; 10; i++) {</span>
+<span class="fc" id="L335">            Work work = new Work();</span>
+<span class="fc" id="L336">            work.setWorkName(&quot;work &quot; + i);</span>
+<span class="fc" id="L337">            work.setStatus(1);</span>
+<span class="fc" id="L338">            work.setDeleteFlg(0);</span>
+<span class="fc" id="L339">            work.setStartDate(startDate);</span>
+<span class="fc" id="L340">            work.setEndDate(endDate);</span>
+<span class="fc" id="L341">            this.workRepository.saveAndFlush(work);</span>
+<span class="fc" id="L342">            startDate = DateUtil.getMoveDay(1, startDate);</span>
+<span class="fc" id="L343">            endDate = DateUtil.getMoveDay(1, endDate);</span>
+        }
+<span class="fc" id="L345">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>WorkControllerTest (May 14, 2022 2:20:41 AM)</div></body></html>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>DateUtil.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">WorkControllerTest (May 14, 2022 2:20:41 AM)</a> &gt; <a href="../../index.html" class="el_group">todo-list</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">vn.nals.demo.common</a> &gt; <span class="el_source">DateUtil.java</span></div><h1>DateUtil.java</h1><pre class="source lang-java linenums">package vn.nals.demo.common;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+<span class="nc" id="L7">public class DateUtil {</span>
+
+    public static final String YYYYMMDDHH24MMSS_FORMAT = &quot;yyyyMMddHHmmss&quot;;
+    public static final String DATE_FORMAT_YYYY_MM_DD_HH_MM_SS = &quot;yyyy/MM/dd HH:mm:ss&quot;;
+
+    public static boolean isDefaultDate(String strDate) {
+<span class="fc" id="L13">        return isDate(strDate, DATE_FORMAT_YYYY_MM_DD_HH_MM_SS);</span>
+    }
+
+    public static Date strToDate(String strDate) {
+<span class="fc" id="L17">        return convertToDate(strDate, DATE_FORMAT_YYYY_MM_DD_HH_MM_SS);</span>
+    }
+
+    public static boolean isDate(String strDate, String formatPattern) {
+        SimpleDateFormat df;
+        Date testDate;
+
+        try {
+<span class="fc" id="L25">            df = new SimpleDateFormat(formatPattern);</span>
+<span class="fc" id="L26">            testDate = df.parse(strDate);</span>
+<span class="fc" id="L27">        } catch (Exception e) {</span>
+<span class="fc" id="L28">            return false;</span>
+        }
+
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if (!df.format(testDate).equals(strDate)) {</span>
+<span class="nc" id="L32">            return false;</span>
+        }
+<span class="fc" id="L34">        return true;</span>
+    }
+
+    public static Date getDate(int year, int month, int date) {
+<span class="fc" id="L38">        Calendar cal = Calendar.getInstance();</span>
+<span class="fc" id="L39">        cal.clear();</span>
+<span class="fc" id="L40">        cal.set(year, month - 1, date);</span>
+<span class="fc" id="L41">        return cal.getTime();</span>
+    }
+
+    public static Date getMoveDay(int move, Date date) {
+<span class="fc" id="L45">        long time = date.getTime();</span>
+<span class="fc" id="L46">        time += (long) ((long) move * 1000 * 60 * 60 * 24);</span>
+<span class="fc" id="L47">        Date rc = new Date(time);</span>
+<span class="fc" id="L48">        return rc;</span>
+    }
+
+    public static String toYYYYMMDDHH24MISS(Date date) {
+<span class="fc" id="L52">        return new SimpleDateFormat(YYYYMMDDHH24MMSS_FORMAT).format(date);</span>
+    }
+
+    public static Date convertToDate(String dateStr, String pattern) {
+<span class="fc" id="L56">        Date date = null;</span>
+<span class="pc bpc" id="L57" title="2 of 4 branches missed.">        if (dateStr == null || pattern == null) {</span>
+<span class="nc" id="L58">            return (date);</span>
+        }
+
+<span class="pc bpc" id="L61" title="1 of 2 branches missed.">        if (dateStr.length() &lt; pattern.length()) {</span>
+<span class="nc" id="L62">            return (null);</span>
+        }
+
+<span class="fc" id="L65">        SimpleDateFormat format = new SimpleDateFormat(pattern);</span>
+<span class="fc" id="L66">        format.setLenient(false);</span>
+        try {
+<span class="fc" id="L68">            date = format.parse(dateStr);</span>
+<span class="pc" id="L69">        } catch (Exception ex) {</span>
+        }
+
+<span class="fc" id="L72">        return date;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>WorkControllerTest (May 14, 2022 2:20:41 AM)</div></body></html>

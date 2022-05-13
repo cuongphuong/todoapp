@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../../../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../../../jacoco-resources/report.gif" type="image/gif"/><title>WorkService.java</title><link rel="stylesheet" href="../../../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../../../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../../../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../../../index.html" class="el_report">WorkControllerTest (May 14, 2022 2:20:41 AM)</a> &gt; <a href="../../index.html" class="el_group">todo-list</a> &gt; <a href="../index.html" class="el_bundle">src/main/java</a> &gt; <a href="index.source.html" class="el_package">vn.nals.demo.service</a> &gt; <span class="el_source">WorkService.java</span></div><h1>WorkService.java</h1><pre class="source lang-java linenums">package vn.nals.demo.service;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import vn.nals.demo.common.Constans;
+import vn.nals.demo.entity.Work;
+import vn.nals.demo.repository.WorkRepository;
+
+@Service(&quot;workService&quot;)
+<span class="fc" id="L17">public class WorkService {</span>
+
+    @Autowired
+    private WorkRepository workRepository;
+
+    public List&lt;Work&gt; findAll(int pageNumber) {
+<span class="fc" id="L23">        Sort sortable = Sort.by(&quot;startDate&quot;).ascending();</span>
+<span class="fc" id="L24">        PageRequest pageable = PageRequest.of(pageNumber,</span>
+<span class="fc" id="L25">                Constans.DEFAULT_PAGE_SIZE, sortable);</span>
+<span class="fc" id="L26">        Page&lt;Work&gt; workList = this.workRepository.findAll(pageable);</span>
+
+<span class="fc" id="L28">        return workList.toList();</span>
+    }
+
+    public Work saveWork(Work work) {
+<span class="fc" id="L32">        return this.workRepository.saveAndFlush(work);</span>
+    }
+    
+    public void deleteWork(Work work) {
+<span class="fc" id="L36">        this.workRepository.delete(work);</span>
+<span class="fc" id="L37">    }</span>
+
+    public Work findOne(Integer workId) {
+<span class="fc" id="L40">        Optional&lt;Work&gt; work = this.workRepository.findById(workId);</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">        if (work.isPresent()) {</span>
+<span class="fc" id="L42">            return work.get();</span>
+        }
+<span class="fc" id="L44">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span>WorkControllerTest (May 14, 2022 2:20:41 AM)</div></body></html>
