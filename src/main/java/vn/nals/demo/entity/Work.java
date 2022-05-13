@@ -35,6 +35,19 @@ public class Work implements Serializable {
         }
     }
 
+    public enum DeleteFlag {
+        OFF(0), ON(1);
+        int flag;
+
+        public int getFlg() {
+            return this.flag;
+        }
+
+        DeleteFlag(int flag) {
+            this.flag = flag;
+        }
+    }
+
     @Id
     @Column(name = "work_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)

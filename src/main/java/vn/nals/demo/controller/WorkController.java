@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vn.nals.demo.common.DateUtil;
 import vn.nals.demo.entity.Work;
+import vn.nals.demo.entity.Work.DeleteFlag;
 import vn.nals.demo.entity.Work.WorkStatus;
 import vn.nals.demo.entity.WorkInput;
 import vn.nals.demo.service.WorkService;
@@ -41,7 +42,7 @@ public class WorkController {
         if (!NumberUtils.isCreatable(pageStr)) {
             return ResponseEntity.status(400).body("Page number is in correct");
         }
-        return ResponseEntity.status(200).body(this.workService.findAll(pageIndex));
+        return ResponseEntity.status(200).body(this.workService.findByPage(pageIndex));
     }
 
     @PostMapping("/work")
@@ -89,7 +90,7 @@ public class WorkController {
         work.setStartDate(DateUtil.strToDate(workInput.getStartDate()));
         work.setEndDate(DateUtil.strToDate(workInput.getEndDate()));
         work.setStatus(NumberUtils.toInt(workInput.getStatus()));
-        work.setDeleteFlg(0);
+        work.setDeleteFlg(DeleteFlag.OFF.getFlg());
         return ResponseEntity.status(200).body(this.workService.saveWork(work));
     }
 

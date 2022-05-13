@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import vn.nals.demo.common.Constans;
 import vn.nals.demo.entity.Work;
+import vn.nals.demo.entity.Work.DeleteFlag;
 import vn.nals.demo.repository.WorkRepository;
 
 @Service("workService")
@@ -19,11 +20,11 @@ public class WorkService {
     @Autowired
     private WorkRepository workRepository;
 
-    public List<Work> findAll(int pageNumber) {
+    public List<Work> findByPage(int pageNumber) {
         Sort sortable = Sort.by("startDate").ascending();
         PageRequest pageable = PageRequest.of(pageNumber,
                 Constans.DEFAULT_PAGE_SIZE, sortable);
-        Page<Work> workList = this.workRepository.findAll(pageable);
+        Page<Work> workList = this.workRepository.findByPage(pageable);
 
         return workList.toList();
     }
@@ -31,9 +32,10 @@ public class WorkService {
     public Work saveWork(Work work) {
         return this.workRepository.saveAndFlush(work);
     }
-    
+
     public void deleteWork(Work work) {
-        this.workRepository.delete(work);
+        work.setDeleteFlg(DeleteFlag.ON.getFlg());
+        this.workRepository.saveAndFlush(work);
     }
 
     public Work findOne(Integer workId) {
